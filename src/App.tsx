@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter, Link, NavLink, Route, Routes, useParams, Outlet, Navigate } from 'react-router-dom'
 import './App.css'
 import { Loading, ErrorNotice } from './components/A11y'
+
 // Expose React on window to avoid require() usage in browser
 if (typeof window !== 'undefined') {
   ;(window as any).React = React
@@ -13,7 +14,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       <main className="lm-main">
         <header className="lm-topbar">
           <div className="lm-topbar-left">
-            <div className="lm-brand">Legal Mate</div>
+            <Link to="/" className="lm-brand">Legal Mate</Link>
             <nav className="lm-topnav">
               <NavLink to="/">Dashboard</NavLink>
               <NavLink to="/cases">Cases</NavLink>
@@ -23,12 +24,14 @@ function Shell({ children }: { children: React.ReactNode }) {
               <NavLink to="/help">Help</NavLink>
             </nav>
           </div>
-          <input className="lm-input" placeholder="Search matters, documents, drafts" style={{ flex: 1 }} />
-          <div className="actions">
-            <Link className="lm-link-btn" to="/cases">+ New Case</Link>
+          <div className="lm-search-container" style={{ flex: 1, maxWidth: '400px' }}>
+            <input className="lm-input lm-search-input" placeholder="Search matters, documents, drafts..." />
+          </div>
+          <div className="lm-topbar .actions">
+            <Link className="lm-btn primary" to="/cases">+ New Case</Link>
           </div>
         </header>
-        <div style={{ padding: '16px 24px' }}>{children}</div>
+        <div className="lm-content">{children}</div>
       </main>
     </div>
   )
@@ -64,30 +67,57 @@ function MattersList() {
 
   return (
     <div>
-      <h1>Cases</h1>
-      <div className="lm-card" style={{ marginBottom: 12 }}>
-        <h3 style={{ marginTop: 0 }}>New Case</h3>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <input className="lm-input" placeholder="Case ID (e.g., M002)" value={id} onChange={(e) => setId(e.target.value)} />
-          <input className="lm-input" placeholder="Case title (e.g., Doe v. Acme)" value={title} onChange={(e) => setTitle(e.target.value)} style={{ flex: 1 }} />
-          <button className="lm-btn primary" onClick={create}>Create</button>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Cases</h1>
+          <p className="lm-page-subtitle">Manage your legal matters and case files</p>
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 16 }}>
-        <div className="lm-card" style={{ padding: 0 }}>
-          <div style={{ borderBottom: '1px solid var(--lm-border)', padding: 10, fontWeight: 600 }}>Your Cases</div>
-          <ul style={{ listStyle: 'none', margin: 0, padding: 8 }}>
+      
+      <div className="lm-card mb-6">
+        <div className="lm-card-header">
+          <h3 className="lm-card-title">Create New Case</h3>
+          <p className="lm-card-subtitle">Start a new matter to organize documents and drafts</p>
+        </div>
+        <div className="lm-form-row">
+          <div className="lm-form-group">
+            <label className="lm-form-label">Case ID</label>
+            <input className="lm-input" placeholder="e.g., M002" value={id} onChange={(e) => setId(e.target.value)} />
+          </div>
+          <div className="lm-form-group">
+            <label className="lm-form-label">Case Title</label>
+            <input className="lm-input" placeholder="e.g., Doe v. Acme Corp" value={title} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+          <div className="lm-form-group flex items-end">
+            <button className="lm-btn primary" onClick={create}>Create Case</button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="lm-sidebar-layout">
+        <div className="lm-sidebar">
+          <div className="lm-sidebar-header">Your Cases</div>
+          <div className="lm-sidebar-content">
+            <ul className="lm-sidebar-list">
             {items.map((m) => (
-              <li key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 6px', borderRadius: 6 }}>
-                <span>{m.title}</span>
-                <Link className="lm-link-btn" to={`/matters/${m.id}/data`}>Open</Link>
+              <li key={m.id} className="lm-sidebar-item">
+                <span className="font-medium">{m.title}</span>
+                <Link className="lm-btn sm" to={`/matters/${m.id}/data`}>Open</Link>
               </li>
             ))}
-            {items.length === 0 && <li style={{ padding: 8, opacity: 0.7 }}>No cases yet.</li>}
+            {items.length === 0 && (
+              <li className="lm-sidebar-item">
+                <span className="text-muted">No cases yet</span>
+              </li>
+            )}
           </ul>
+          </div>
         </div>
         <div>
-          <div className="lm-card">Select a case on the left to open its workspace.</div>
+          <div className="lm-empty-state">
+            <div className="lm-empty-title">Select a Case</div>
+            <p className="lm-empty-description">Choose a case from the sidebar to open its workspace and begin working with documents, drafts, and evidence.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -98,15 +128,16 @@ function MatterLayout() {
   const { matterId } = useParams();
   return (
     <div>
-      <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <h1 style={{ margin: 0 }}>Matter {matterId}</h1>
-          <div style={{ fontSize: 12, opacity: 0.7 }}>Workspace</div>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Matter {matterId}</h1>
+          <p className="lm-page-subtitle">Case workspace and document management</p>
         </div>
         <div>
-          <Link className="lm-btn" to="/matters">Back to Matters</Link>
+          <Link className="lm-btn secondary" to="/cases">← Back to Cases</Link>
         </div>
       </div>
+      
       <div className="lm-subnav">
         <NavLink to={`/matters/${matterId}/data`}>Data</NavLink>
         <NavLink to={`/matters/${matterId}/documents`}>Documents</NavLink>
@@ -118,7 +149,8 @@ function MatterLayout() {
         <NavLink to={`/matters/${matterId}/review`}>Review</NavLink>
         <NavLink to={`/matters/${matterId}/exports`}>Exports</NavLink>
       </div>
-      <div style={{ marginTop: 12 }}>
+      
+      <div>
         <Outlet />
       </div>
     </div>
@@ -133,25 +165,54 @@ function Dashboard() {
   }, []);
   return (
     <div>
-      <h1>Dashboard</h1>
-      <div style={{ display: 'grid', gap: 12 }}>
-        <div style={{ border: '1px solid #eee', padding: 12 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <strong>Matter ABC vs XYZ</strong>
-            <span>Approved • Trust: 85% citations • No conflicts • Preset: Insurer</span>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Dashboard</h1>
+          <p className="lm-page-subtitle">Overview of your legal matters and recent activity</p>
+        </div>
+      </div>
+      
+      <div className="lm-dashboard-grid">
+        <div className="lm-matter-card">
+          <div className="lm-matter-header">
+            <h3 className="lm-matter-title">Matter ABC vs XYZ</h3>
+            <div className="flex gap-2">
+              <span className="lm-chip success">Approved</span>
+              <span className="lm-chip primary">Insurer</span>
+            </div>
           </div>
-          <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-            <Link to="/drafting">New Draft</Link>
-            <Link to="/data">Open</Link>
+          <div className="lm-trust-bar">
+            <div className="lm-trust-item">
+              <div className="lm-status-dot success"></div>
+              <span>85% citations</span>
+            </div>
+            <div className="lm-trust-item">
+              <div className="lm-status-dot success"></div>
+              <span>No conflicts</span>
+            </div>
+            <div className="lm-trust-item">
+              <div className="lm-status-dot primary"></div>
+              <span>Preset: Insurer</span>
+            </div>
+          </div>
+          <div className="lm-matter-actions">
+            <Link className="lm-btn primary sm" to="/drafting">New Draft</Link>
+            <Link className="lm-btn secondary sm" to="/data">Open Matter</Link>
           </div>
         </div>
-        <div style={{ border: '1px solid #eee', padding: 12 }}>
-          <strong>Usage metrics</strong>
-          <div style={{ marginTop: 6, fontSize: 14 }}>
+        
+        <div className="lm-metric-card">
+          <div className="lm-card-header">
+            <h3 className="lm-card-title">Usage Metrics</h3>
+          </div>
+          <div className="text-sm">
             {metrics ? (
-              <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(metrics, null, 2)}</pre>
+              <pre className="text-xs">{JSON.stringify(metrics, null, 2)}</pre>
             ) : (
-              <span>Loading metrics…</span>
+              <div className="lm-loading">
+                <div className="lm-spinner"></div>
+                <span>Loading metrics...</span>
+              </div>
             )}
           </div>
         </div>
@@ -161,7 +222,14 @@ function Dashboard() {
 }
 
 function Placeholder({ title }: { title: string }) {
-  return <h1>{title}</h1>
+  return (
+    <div className="lm-page-header">
+      <div className="lm-page-title">
+        <h1>{title}</h1>
+        <p className="lm-page-subtitle">This feature is coming soon</p>
+      </div>
+    </div>
+  )
 }
 
 function DataPage() {
@@ -201,49 +269,114 @@ function DataPage() {
 
   return (
     <div>
-      <h1>Data</h1>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Case Data</h1>
+          <p className="lm-page-subtitle">Document summaries and extracted information</p>
+        </div>
+      </div>
+      
       {!params.matterId && (
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-          <label>Matter ID</label>
-          <input value={matterId} onChange={(e) => setMatterId(e.target.value)} style={{ padding: 6, border: '1px solid #ddd', borderRadius: 6 }} />
+        <div className="lm-card mb-6">
+          <div className="lm-form-group">
+            <label className="lm-form-label">Matter ID</label>
+            <input className="lm-input" value={matterId} onChange={(e) => setMatterId(e.target.value)} />
+          </div>
         </div>
       )}
+      
       {loading && <Loading />}
       <ErrorNotice message={error || ''} />
+      
       {data && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 16 }}>
+        <div className="lm-sidebar-layout">
           <div>
-            <h3>Case Summary</h3>
+            <div className="lm-card mb-6">
+              <div className="lm-card-header">
+                <h3 className="lm-card-title">Case Summary</h3>
+              </div>
             <p>{data.caseSummary || 'No case summary yet. Upload documents to generate summaries.'}</p>
-            <h3>Documents</h3>
-            <div style={{ display: 'grid', gap: 8 }}>
+            </div>
+            
+            <div className="lm-card">
+              <div className="lm-card-header">
+                <h3 className="lm-card-title">Documents</h3>
+              </div>
+              <div className="lm-document-list">
               {(data.documents && data.documents.length > 0) ? data.documents.map((d: any) => (
-                <div key={d.docId} style={{ border: '1px solid #eee', padding: 8 }}>
-                  <strong>{d.docId}</strong>
-                  <div style={{ margin: '6px 0' }}>{d.summary}</div>
+                <div key={d.docId} className="lm-document-item">
+                  <div className="lm-document-header">
+                    <h4 className="lm-document-title">{d.docId}</h4>
+                  </div>
+                  <p className="mb-4">{d.summary}</p>
                   <ul>
                     {d.keyFacts?.map((f: any, i: number) => (
-                      <li key={i}>{f.text} <em>({f.source}{f.page ? ` p.${f.page}` : ''})</em></li>
+                      <li key={i}>
+                        {f.text} 
+                        <span className="text-muted"> — {f.source}{f.page ? ` p.${f.page}` : ''}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
               )) : (
-                <div className="lm-card">No documents yet. Use Documents → Upload to add files for OCR and summaries.</div>
+                <div className="lm-empty-state">
+                  <div className="lm-empty-title">No Documents</div>
+                  <p className="lm-empty-description">Use Documents → Upload to add files for OCR and summaries.</p>
+                </div>
               )}
+              </div>
             </div>
           </div>
-          <aside style={{ border: '1px solid #eee', padding: 8 }}>
-            <h3>Risk Check</h3>
+          
+          <div className="lm-sidebar">
+            <div className="lm-sidebar-header">Risk Assessment</div>
+            <div className="lm-sidebar-content">
             {trust ? (
-              <div>
-                <div><strong>Citation coverage:</strong> {(trust.citationCoverage * 100).toFixed(0)}%</div>
-                <div><strong>Conflicts:</strong> {trust.conflicts?.length || 0}</div>
-                <div><strong>Redaction preset:</strong> {trust.redactionPreset}</div>
-                <div><strong>OCR alerts:</strong> {trust.ocrAlerts?.length || 0}</div>
-                <div><strong>Missing docs:</strong> {(trust.missingDocuments || []).join(', ') || 'none'}</div>
+              <div className="space-y-4">
+                <div className="lm-trust-item">
+                  <div className="lm-status-dot success"></div>
+                  <div>
+                    <div className="font-medium">Citation Coverage</div>
+                    <div className="text-sm text-muted">{(trust.citationCoverage * 100).toFixed(0)}%</div>
+                  </div>
+                </div>
+                <div className="lm-trust-item">
+                  <div className="lm-status-dot success"></div>
+                  <div>
+                    <div className="font-medium">Conflicts</div>
+                    <div className="text-sm text-muted">{trust.conflicts?.length || 0}</div>
+                  </div>
+                </div>
+                <div className="lm-trust-item">
+                  <div className="lm-status-dot primary"></div>
+                  <div>
+                    <div className="font-medium">Redaction Preset</div>
+                    <div className="text-sm text-muted">{trust.redactionPreset}</div>
+                  </div>
+                </div>
+                <div className="lm-trust-item">
+                  <div className="lm-status-dot warning"></div>
+                  <div>
+                    <div className="font-medium">OCR Alerts</div>
+                    <div className="text-sm text-muted">{trust.ocrAlerts?.length || 0}</div>
+                  </div>
+                </div>
+                <div className="lm-trust-item">
+                  <div className="lm-status-dot error"></div>
+                  <div>
+                    <div className="font-medium">Missing Documents</div>
+                    <div className="text-sm text-muted">{(trust.missingDocuments || []).join(', ') || 'none'}</div>
+                  </div>
+                </div>
               </div>
-            ) : (<div>Loading trust…</div>)}
-          </aside>
+            ) : (
+              <div className="lm-loading">
+                <div className="lm-spinner"></div>
+                <span>Loading assessment...</span>
+              </div>
+            )}
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -288,54 +421,86 @@ function CopilotPage() {
 
   return (
       <div>
-      <h1>Copilot</h1>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>AI Copilot</h1>
+          <p className="lm-page-subtitle">Ask questions about your case with AI-powered assistance</p>
+        </div>
+      </div>
+      
       {!params.matterId && (
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-          <label>Matter ID</label>
-          <input value={matterId} onChange={(e) => setMatterId(e.target.value)} style={{ padding: 6, border: '1px solid #ddd', borderRadius: 6 }} />
+        <div className="lm-card mb-6">
+          <div className="lm-form-group">
+            <label className="lm-form-label">Matter ID</label>
+            <input className="lm-input" value={matterId} onChange={(e) => setMatterId(e.target.value)} />
+          </div>
         </div>
       )}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 12 }}>
-        <div style={{ border: '1px solid #eee', padding: 8, minHeight: 200 }}>
+      
+      <div className="lm-sidebar-layout">
+        <div className="lm-chat-container" style={{ minHeight: '500px' }}>
+          <div className="lm-chat-messages">
           {messages.length === 0 && (
-            <div className="lm-card" style={{ marginBottom: 8 }}>
-              Ask a question about this matter (e.g., “Summarize treatment and bills with citations”).
+            <div className="lm-empty-state">
+              <div className="lm-empty-title">Start a Conversation</div>
+              <p className="lm-empty-description">Ask questions about this matter, such as "Summarize treatment and bills with citations"</p>
             </div>
           )}
           {messages.map((m, i) => (
-          <div key={i} style={{ marginBottom: 8 }}>
-            <strong>{m.role === 'user' ? 'You' : 'Copilot'}:</strong> {m.content}
+            <div key={i} className={`lm-chat-message ${m.role}`}>
+              <div className={`lm-chat-bubble ${m.role}`}>
+                <div className="font-medium mb-1">{m.role === 'user' ? 'You' : 'AI Copilot'}</div>
+                <div>{m.content}</div>
             {m.citations && (
-              <ul>
+                <ul className="mt-2 text-sm">
                 {m.citations.map((c: any, j: number) => (
-                  <li key={j}>{c.source}{c.page ? ` p.${c.page}` : ''}</li>
+                    <li key={j} className="text-muted">📄 {c.source}{c.page ? ` p.${c.page}` : ''}</li>
                 ))}
               </ul>
             )}
+              </div>
+            </div>
+          ))}
           </div>
-        ))}
+          <div className="lm-chat-input-container">
+            <input 
+              className="lm-chat-input lm-input" 
+              value={input} 
+              onChange={(e) => setInput(e.target.value)} 
+              placeholder="Ask about this matter..." 
+              onKeyPress={(e) => e.key === 'Enter' && send()}
+            />
+            <button className="lm-btn primary" onClick={send} disabled={busy}>
+              {busy ? 'Sending...' : 'Send'}
+            </button>
+          </div>
         </div>
-        <aside style={{ border: '1px solid #eee', padding: 8 }}>
-          <h3>RAG Search</h3>
-          <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
-            <input value={searchQ} onChange={(e) => setSearchQ(e.target.value)} placeholder="Search matter docs…" style={{ flex: 1, padding: 6, border: '1px solid #ddd', borderRadius: 6 }} />
-            <button onClick={doSearch}>Search</button>
+        
+        <div className="lm-sidebar">
+          <div className="lm-sidebar-header">Document Search</div>
+          <div className="lm-sidebar-content">
+            <div className="flex gap-2 mb-4">
+              <input 
+                className="lm-input" 
+                value={searchQ} 
+                onChange={(e) => setSearchQ(e.target.value)} 
+                placeholder="Search documents..." 
+                style={{ flex: 1 }}
+              />
+              <button className="lm-btn secondary sm" onClick={doSearch}>Search</button>
+            </div>
+            <div className="space-y-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              {searchRes.map((it: any, i: number) => (
+                <div key={i} className="p-3 border border-gray-200 rounded">
+                  <div className="text-xs text-muted mb-1">
+                    📄 {it.source}{it.page ? ` p.${it.page}` : ''}
+                  </div>
+                  <div className="text-sm">{String(it.text || '').slice(0, 200)}...</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <ul style={{ maxHeight: 240, overflow: 'auto' }}>
-            {searchRes.map((it: any, i: number) => (
-              <li key={i} style={{ marginBottom: 8 }}>
-                <div style={{ fontSize: 12, opacity: 0.7 }}>{it.source}{it.page ? ` p.${it.page}` : ''}</div>
-                <div>{String(it.text || '').slice(0, 240)}…</div>
-              </li>
-            ))}
-          </ul>
-        </aside>
-      </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about this matter…" style={{ flex: 1, padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-        <button onClick={send} disabled={busy}>
-          {busy ? 'Sending…' : 'Send'}
-        </button>
+        </div>
       </div>
     </div>
   )
@@ -424,34 +589,74 @@ function DocumentsPage() {
 
   return (
     <div>
-      <h1>Documents</h1>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Documents</h1>
+          <p className="lm-page-subtitle">Upload and manage case documents with OCR processing</p>
+        </div>
+      </div>
+      
       {!params.matterId && (
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-          <label>Matter ID</label>
-          <input value={matterId} onChange={(e) => setMatterId(e.target.value)} style={{ padding: 6, border: '1px solid #ddd', borderRadius: 6 }} />
-        <input type="file" multiple onChange={onSelect} disabled={busy} />
+        <div className="lm-card mb-6">
+          <div className="lm-form-row">
+            <div className="lm-form-group">
+              <label className="lm-form-label">Matter ID</label>
+              <input className="lm-input" value={matterId} onChange={(e) => setMatterId(e.target.value)} />
+            </div>
+            <div className="lm-form-group flex items-end">
+              <input 
+                type="file" 
+                multiple 
+                onChange={onSelect} 
+                disabled={busy}
+                className="lm-input"
+                accept=".pdf,.docx,.jpg,.jpeg,.png"
+              />
+            </div>
+          </div>
         </div>
       )}
+      
       {params.matterId && (
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-          <input type="file" multiple onChange={onSelect} disabled={busy} />
+        <div className="lm-card mb-6">
+          <div className="lm-card-header">
+            <h3 className="lm-card-title">Upload Documents</h3>
+            <p className="lm-card-subtitle">Supported formats: PDF, DOCX, JPG, PNG</p>
+          </div>
+          <input 
+            type="file" 
+            multiple 
+            onChange={onSelect} 
+            disabled={busy}
+            className="lm-input"
+            accept=".pdf,.docx,.jpg,.jpeg,.png"
+          />
         </div>
       )}
+      
       <ErrorNotice message={err || ''} />
-      <div style={{ display: 'grid', gap: 8 }}>
+      
+      <div className="lm-document-list">
         {items.length === 0 && (
-          <div className="lm-card">No uploads yet. Select a file to begin. Allowed types: PDF, DOCX, images.</div>
+          <div className="lm-empty-state">
+            <div className="lm-empty-title">No Documents</div>
+            <p className="lm-empty-description">Upload files to begin processing. Supported types: PDF, DOCX, and images.</p>
+          </div>
         )}
         {items.map((it, i) => (
-          <div key={i} style={{ border: '1px solid #eee', padding: 8 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <strong>{it.name}</strong>
-              <span>Status: {it.status}</span>
+          <div key={i} className="lm-document-item">
+            <div className="lm-document-header">
+              <h4 className="lm-document-title">{it.name}</h4>
+              <span className={`lm-chip ${it.status === 'trusted' ? 'success' : it.status === 'error' ? 'error' : 'warning'}`}>
+                {it.status}
+              </span>
             </div>
-            <div>Type: {it.mime}</div>
-            {it.documentId && <div>Document ID: {it.documentId}</div>}
-            <div>OCR: scheduled</div>
-            <div>Digital text: unknown</div>
+            <div className="lm-document-meta">
+              <div>Type: {it.mime}</div>
+              {it.documentId && <div>Document ID: {it.documentId}</div>}
+              <div>OCR: scheduled</div>
+              <div>Digital text: unknown</div>
+            </div>
           </div>
         ))}
       </div>
@@ -560,29 +765,62 @@ function DraftingPage() {
 
   return (
     <div>
-      <h1>Drafting</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 16 }}>
-        <div>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Document Drafting</h1>
+          <p className="lm-page-subtitle">Create professional legal documents with AI assistance</p>
+        </div>
+      </div>
+      
+      <div className="lm-drafting-layout">
+        <div className="lm-drafting-stepper">
           {!params.matterId && (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-              <label>Matter ID</label>
-              <input value={matterId} onChange={(e) => setMatterId(e.target.value)} style={{ padding: 6, border: '1px solid #ddd', borderRadius: 6 }} />
+            <div className="lm-form-group mb-6">
+              <label className="lm-form-label">Matter ID</label>
+              <input className="lm-input" value={matterId} onChange={(e) => setMatterId(e.target.value)} />
             </div>
           )}
-          <ol style={{ listStyle: 'decimal', paddingLeft: 18, marginBottom: 12 }}>
+          
+          <div className="mb-6">
+            <h3 className="font-semibold mb-4">Document Steps</h3>
+            <ol className="lm-stepper">
             {steps.map((s, i) => (
-              <li key={s} style={{ margin: '6px 0', cursor: 'pointer', fontWeight: step === i ? 700 : 400 }} onClick={() => setStep(i)}>{s}</li>
+              <li key={s} className={`lm-stepper-item ${step === i ? 'active' : ''}`} onClick={() => setStep(i)}>
+                <div className="lm-stepper-number">{i + 1}</div>
+                <span>{s}</span>
+              </li>
             ))}
           </ol>
+          </div>
+          
+          <div className="mb-6">
           {renderStep()}
-          <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
-            <button onClick={() => setStep((s: number) => Math.max(0, s - 1))} disabled={step === 0}>Back</button>
-            <button onClick={() => setStep((s: number) => Math.min(steps.length - 1, s + 1))} disabled={step === steps.length - 1}>Next</button>
+          </div>
+          
+          <div className="flex gap-2">
+            <button 
+              className="lm-btn secondary" 
+              onClick={() => setStep((s: number) => Math.max(0, s - 1))} 
+              disabled={step === 0}
+            >
+              ← Previous
+            </button>
+            <button 
+              className="lm-btn primary" 
+              onClick={() => setStep((s: number) => Math.min(steps.length - 1, s + 1))} 
+              disabled={step === steps.length - 1}
+            >
+              Next →
+            </button>
           </div>
         </div>
-        <div>
-          <h3>Live Preview</h3>
-          <pre style={{ whiteSpace: 'pre-wrap', border: '1px solid #eee', padding: 12 }}>{preview()}</pre>
+        
+        <div className="lm-drafting-preview">
+          <div className="lm-card-header">
+            <h3 className="lm-card-title">Live Preview</h3>
+            <p className="lm-card-subtitle">Document preview updates as you complete each step</p>
+          </div>
+          <pre className="whitespace-pre-wrap text-sm leading-relaxed">{preview()}</pre>
         </div>
       </div>
     </div>
@@ -610,23 +848,69 @@ function TemplatesPage() {
 
   return (
     <div>
-      <h1>Templates</h1>
-      <div style={{ display: 'grid', gap: 8, gridTemplateColumns: '1fr 1fr' }}>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Document Templates</h1>
+          <p className="lm-page-subtitle">Manage reusable document templates with variables</p>
+        </div>
+      </div>
+      
+      <div className="lm-grid-2">
         <div>
-          <h3>New Template</h3>
-          <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} style={{ width: '100%', padding: 8, border: '1px solid #ddd', borderRadius: 6, marginBottom: 6 }} />
-          <textarea placeholder="Content with {{variables}}" value={content} onChange={(e) => setContent(e.target.value)} style={{ width: '100%', height: 160, padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-          <div style={{ marginTop: 8 }}>
-            <button onClick={create}>Create</button>
+          <div className="lm-card">
+            <div className="lm-card-header">
+              <h3 className="lm-card-title">Create New Template</h3>
+              <p className="lm-card-subtitle">Use {{variable}} syntax for dynamic content</p>
+            </div>
+            <div className="lm-form-group">
+              <label className="lm-form-label">Template Name</label>
+              <input 
+                className="lm-input" 
+                placeholder="e.g., Demand Letter" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+              />
+            </div>
+            <div className="lm-form-group">
+              <label className="lm-form-label">Template Content</label>
+              <textarea 
+                className="lm-textarea" 
+                placeholder="Enter template content with {{variables}}..." 
+                value={content} 
+                onChange={(e) => setContent(e.target.value)}
+                style={{ height: '200px' }}
+              />
+              <div className="lm-form-help">
+                Use variables like {{claimant}}, {{defendant}}, {{incidentDate}} for dynamic content
+              </div>
+            </div>
+            <button className="lm-btn primary" onClick={create}>Create Template</button>
           </div>
         </div>
+        
         <div>
-          <h3>Existing Templates</h3>
-          <ul>
-            {items.map((t: any) => (
-              <li key={t.id}>{t.name} <small>updated {new Date(t.updatedAt).toLocaleString?.() || t.updatedAt}</small></li>
-            ))}
-          </ul>
+          <div className="lm-card">
+            <div className="lm-card-header">
+              <h3 className="lm-card-title">Existing Templates</h3>
+            </div>
+            <div className="space-y-3">
+              {items.length === 0 ? (
+                <div className="lm-empty-state">
+                  <div className="lm-empty-title">No Templates</div>
+                  <p className="lm-empty-description">Create your first template to get started</p>
+                </div>
+              ) : (
+                items.map((t: any) => (
+                  <div key={t.id} className="p-3 border border-gray-200 rounded">
+                    <div className="font-medium">{t.name}</div>
+                    <div className="text-sm text-muted">
+                      Updated {new Date(t.updatedAt).toLocaleString?.() || t.updatedAt}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -662,39 +946,86 @@ function IntegrationsPage() {
 
   return (
     <div>
-      <h1>Integrations</h1>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-        <label>Org</label>
-        <input value={orgId} onChange={(e) => setOrgId(e.target.value)} style={{ padding: 6, border: '1px solid #ddd', borderRadius: 6 }} />
-        <label>Provider</label>
-        <select value={provider} onChange={(e) => setProvider(e.target.value as any)}>
-          <option value="clio">Clio</option>
-          <option value="microsoft">Microsoft 365</option>
-          <option value="google">Google Workspace</option>
-        </select>
-        <button onClick={save} disabled={loading}>{loading ? 'Saving…' : 'Save'}</button>
-        {saved && <span style={{ color: 'green' }}>Saved</span>}
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Integrations</h1>
+          <p className="lm-page-subtitle">Connect with your existing legal software and cloud storage</p>
+        </div>
       </div>
-      <div style={{ display: 'grid', gap: 8, maxWidth: 520 }}>
+      
+      <div className="lm-card mb-6">
+        <div className="lm-card-header">
+          <h3 className="lm-card-title">Integration Settings</h3>
+        </div>
+        <div className="lm-form-row mb-4">
+          <div className="lm-form-group">
+            <label className="lm-form-label">Organization</label>
+            <input className="lm-input" value={orgId} onChange={(e) => setOrgId(e.target.value)} />
+          </div>
+          <div className="lm-form-group">
+            <label className="lm-form-label">Provider</label>
+            <select className="lm-select" value={provider} onChange={(e) => setProvider(e.target.value as any)}>
+              <option value="clio">Clio</option>
+              <option value="microsoft">Microsoft 365</option>
+              <option value="google">Google Workspace</option>
+            </select>
+          </div>
+          <div className="lm-form-group flex items-end gap-2">
+            <button className="lm-btn primary" onClick={save} disabled={loading}>
+              {loading ? 'Saving...' : 'Save Configuration'}
+            </button>
+            {saved && <span className="lm-chip success">Saved</span>}
+          </div>
+        </div>
+      </div>
+      
+      <div className="lm-card">
+        <div className="lm-card-header">
+          <h3 className="lm-card-title">Provider Configuration</h3>
+          <p className="lm-card-subtitle">Enter your {provider} API credentials</p>
+        </div>
+        <div className="lm-form-group space-y-4" style={{ maxWidth: '600px' }}>
         {provider === 'clio' && (
           <>
-            <input placeholder="Client ID" value={value.clientId || ''} onChange={(e) => setField('clientId', e.target.value)} style={{ padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-            <input placeholder="Client Secret" value={value.clientSecret || ''} onChange={(e) => setField('clientSecret', e.target.value)} style={{ padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
+            <div className="lm-form-group">
+              <label className="lm-form-label">Client ID</label>
+              <input className="lm-input" placeholder="Enter Clio Client ID" value={value.clientId || ''} onChange={(e) => setField('clientId', e.target.value)} />
+            </div>
+            <div className="lm-form-group">
+              <label className="lm-form-label">Client Secret</label>
+              <input className="lm-input" type="password" placeholder="Enter Clio Client Secret" value={value.clientSecret || ''} onChange={(e) => setField('clientSecret', e.target.value)} />
+            </div>
           </>
         )}
         {provider === 'microsoft' && (
           <>
-            <input placeholder="Tenant ID" value={value.tenantId || ''} onChange={(e) => setField('tenantId', e.target.value)} style={{ padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-            <input placeholder="Client ID" value={value.clientId || ''} onChange={(e) => setField('clientId', e.target.value)} style={{ padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-            <input placeholder="Client Secret" value={value.clientSecret || ''} onChange={(e) => setField('clientSecret', e.target.value)} style={{ padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
+            <div className="lm-form-group">
+              <label className="lm-form-label">Tenant ID</label>
+              <input className="lm-input" placeholder="Enter Microsoft Tenant ID" value={value.tenantId || ''} onChange={(e) => setField('tenantId', e.target.value)} />
+            </div>
+            <div className="lm-form-group">
+              <label className="lm-form-label">Client ID</label>
+              <input className="lm-input" placeholder="Enter Microsoft Client ID" value={value.clientId || ''} onChange={(e) => setField('clientId', e.target.value)} />
+            </div>
+            <div className="lm-form-group">
+              <label className="lm-form-label">Client Secret</label>
+              <input className="lm-input" type="password" placeholder="Enter Microsoft Client Secret" value={value.clientSecret || ''} onChange={(e) => setField('clientSecret', e.target.value)} />
+            </div>
           </>
         )}
         {provider === 'google' && (
           <>
-            <input placeholder="Client ID" value={value.clientId || ''} onChange={(e) => setField('clientId', e.target.value)} style={{ padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-            <input placeholder="Client Secret" value={value.clientSecret || ''} onChange={(e) => setField('clientSecret', e.target.value)} style={{ padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
+            <div className="lm-form-group">
+              <label className="lm-form-label">Client ID</label>
+              <input className="lm-input" placeholder="Enter Google Client ID" value={value.clientId || ''} onChange={(e) => setField('clientId', e.target.value)} />
+            </div>
+            <div className="lm-form-group">
+              <label className="lm-form-label">Client Secret</label>
+              <input className="lm-input" type="password" placeholder="Enter Google Client Secret" value={value.clientSecret || ''} onChange={(e) => setField('clientSecret', e.target.value)} />
+            </div>
           </>
         )}
+        </div>
       </div>
     </div>
   )
@@ -706,20 +1037,46 @@ function SettingsPage() {
   const [seats, setSeats] = ReactLib.useState(5);
   return (
     <div>
-      <h1>Settings</h1>
-      <h3>Subscription</h3>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-        <label>Plan</label>
-        <select value={plan} onChange={(e) => setPlan(e.target.value as any)}>
-          <option value="Basic">Basic</option>
-          <option value="Pro">Pro</option>
-          <option value="Enterprise">Enterprise</option>
-        </select>
-        <label>Seats</label>
-        <input type="number" value={seats} onChange={(e) => setSeats(parseInt(e.target.value || '0', 10))} style={{ width: 100, padding: 6, border: '1px solid #ddd', borderRadius: 6 }} />
-        <button disabled>Update (stub)</button>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Settings</h1>
+          <p className="lm-page-subtitle">Manage your subscription and account preferences</p>
+        </div>
       </div>
-      <div style={{ opacity: 0.7 }}>Billing management is a stub for now.</div>
+      
+      <div className="lm-card">
+        <div className="lm-card-header">
+          <h3 className="lm-card-title">Subscription Management</h3>
+          <p className="lm-card-subtitle">Manage your Legal Mate subscription plan and user seats</p>
+        </div>
+        <div className="lm-form-row mb-4">
+          <div className="lm-form-group">
+            <label className="lm-form-label">Subscription Plan</label>
+            <select className="lm-select" value={plan} onChange={(e) => setPlan(e.target.value as any)}>
+              <option value="Basic">Basic - $99/month</option>
+              <option value="Pro">Pro - $199/month</option>
+              <option value="Enterprise">Enterprise - Contact Sales</option>
+            </select>
+          </div>
+          <div className="lm-form-group">
+            <label className="lm-form-label">User Seats</label>
+            <input 
+              className="lm-input" 
+              type="number" 
+              value={seats} 
+              onChange={(e) => setSeats(parseInt(e.target.value || '0', 10))} 
+              min="1"
+              max="100"
+            />
+          </div>
+          <div className="lm-form-group flex items-end">
+            <button className="lm-btn secondary" disabled>Update Plan</button>
+          </div>
+        </div>
+        <div className="lm-chip warning">
+          Billing management is currently in development
+        </div>
+      </div>
     </div>
   )
 }
@@ -744,35 +1101,68 @@ function EvidenceBoardPage() {
 
   return (
     <div>
-      <h1>Evidence Board</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-        <div className="lm-card">
-          <h3>Unreviewed</h3>
-          <ul>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Evidence Board</h1>
+          <p className="lm-page-subtitle">Organize and categorize case evidence and exhibits</p>
+        </div>
+      </div>
+      
+      <div className="lm-evidence-board">
+        <div className="lm-evidence-column">
+          <div className="lm-evidence-header">Unreviewed</div>
+          <div>
             {unreviewed.map((f) => (
-              <li key={f}>
-                {f} <button className="lm-btn" onClick={() => move(unreviewed, setUnreviewed, setRelevant, f)}>Mark relevant</button>
-              </li>
+              <div key={f} className="lm-evidence-item">
+                <div className="font-medium mb-2">{f}</div>
+                <button className="lm-btn sm primary" onClick={() => move(unreviewed, setUnreviewed, setRelevant, f)}>
+                  Mark Relevant
+                </button>
+              </div>
             ))}
-          </ul>
+            {unreviewed.length === 0 && (
+              <div className="lm-empty-state">
+                <div className="lm-empty-title">No Unreviewed Items</div>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="lm-card">
-          <h3>Relevant</h3>
-          <ul>
+        
+        <div className="lm-evidence-column">
+          <div className="lm-evidence-header">Relevant</div>
+          <div>
             {relevant.map((f) => (
-              <li key={f}>
-                {f} <button className="lm-btn" onClick={() => promoteToExhibit(f)}>Make exhibit</button>
-              </li>
+              <div key={f} className="lm-evidence-item">
+                <div className="font-medium mb-2">{f}</div>
+                <button className="lm-btn sm secondary" onClick={() => promoteToExhibit(f)}>
+                  Make Exhibit
+                </button>
+              </div>
             ))}
-          </ul>
+            {relevant.length === 0 && (
+              <div className="lm-empty-state">
+                <div className="lm-empty-title">No Relevant Items</div>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="lm-card">
-          <h3>Exhibits</h3>
-          <ul>
+        
+        <div className="lm-evidence-column">
+          <div className="lm-evidence-header">Exhibits</div>
+          <div>
             {exhibits.map((e, i) => (
-              <li key={i}><strong>Exhibit {e.number}:</strong> {e.name} {e.caption && <em>— {e.caption}</em>}</li>
+              <div key={i} className="lm-evidence-item">
+                <div className="font-semibold text-primary mb-1">Exhibit {e.number}</div>
+                <div className="font-medium">{e.name}</div>
+                {e.caption && <div className="text-sm text-muted italic mt-1">{e.caption}</div>}
+              </div>
             ))}
-          </ul>
+            {exhibits.length === 0 && (
+              <div className="lm-empty-state">
+                <div className="lm-empty-title">No Exhibits</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -796,20 +1186,53 @@ function TimelinePage() {
 
   return (
     <div>
-      <h1>Timeline</h1>
-      <div className="lm-card" style={{ marginBottom: 12 }}>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <input className="lm-input" placeholder="YYYY-MM-DD" value={date} onChange={(e) => setDate(e.target.value)} />
-          <input className="lm-input" placeholder="Event title" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <input className="lm-input" placeholder="Source (optional)" value={source} onChange={(e) => setSource(e.target.value)} />
-          <button className="lm-btn" onClick={addEvent}>Add</button>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Case Timeline</h1>
+          <p className="lm-page-subtitle">Track important events and dates in chronological order</p>
         </div>
       </div>
-      <ul>
+      
+      <div className="lm-card mb-6">
+        <div className="lm-card-header">
+          <h3 className="lm-card-title">Add New Event</h3>
+        </div>
+        <div className="lm-form-row">
+          <div className="lm-form-group">
+            <label className="lm-form-label">Date</label>
+            <input className="lm-input" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          </div>
+          <div className="lm-form-group">
+            <label className="lm-form-label">Event Title</label>
+            <input className="lm-input" placeholder="e.g., Incident occurred" value={title} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+          <div className="lm-form-group">
+            <label className="lm-form-label">Source Document</label>
+            <input className="lm-input" placeholder="e.g., police_report.pdf" value={source} onChange={(e) => setSource(e.target.value)} />
+          </div>
+          <div className="lm-form-group flex items-end">
+            <button className="lm-btn primary" onClick={addEvent}>Add Event</button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="lm-timeline">
         {events.sort((a, b) => a.date.localeCompare(b.date)).map((ev, i) => (
-          <li key={i}><strong>{ev.date}:</strong> {ev.title} {ev.source && <em>({ev.source})</em>}</li>
+          <div key={i} className="lm-timeline-item">
+            <div className="lm-timeline-content">
+              <div className="lm-timeline-date">{new Date(ev.date).toLocaleDateString()}</div>
+              <div className="lm-timeline-title">{ev.title}</div>
+              {ev.source && <div className="lm-timeline-source">Source: {ev.source}</div>}
+            </div>
+          </div>
         ))}
-      </ul>
+        {events.length === 0 && (
+          <div className="lm-empty-state">
+            <div className="lm-empty-title">No Timeline Events</div>
+            <p className="lm-empty-description">Add events to build a chronological timeline of your case</p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -836,38 +1259,78 @@ function DamagesPage() {
 
   return (
     <div>
-      <h1>Damages</h1>
-      <div className="lm-card" style={{ marginBottom: 12 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: 8, alignItems: 'center' }}>
-          <input className="lm-input" placeholder="Provider/Service" value={provider} onChange={(e) => setProvider(e.target.value)} />
-          <input className="lm-input" placeholder="YYYY-MM-DD" value={date} onChange={(e) => setDate(e.target.value)} />
-          <input className="lm-input" placeholder="Billed" value={billed} onChange={(e) => setBilled(e.target.value)} />
-          <input className="lm-input" placeholder="Paid (optional)" value={paid} onChange={(e) => setPaid(e.target.value)} />
-          <button className="lm-btn" onClick={addLine}>Add</button>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Damages Calculator</h1>
+          <p className="lm-page-subtitle">Track medical expenses and calculate total damages</p>
         </div>
       </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      
+      <div className="lm-card mb-6">
+        <div className="lm-card-header">
+          <h3 className="lm-card-title">Add Medical Expense</h3>
+        </div>
+        <div className="lm-form-row">
+          <div className="lm-form-group">
+            <label className="lm-form-label">Provider/Service</label>
+            <input className="lm-input" placeholder="e.g., Emergency Room Visit" value={provider} onChange={(e) => setProvider(e.target.value)} />
+          </div>
+          <div className="lm-form-group">
+            <label className="lm-form-label">Service Date</label>
+            <input className="lm-input" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          </div>
+          <div className="lm-form-group">
+            <label className="lm-form-label">Amount Billed</label>
+            <input className="lm-input" type="number" step="0.01" placeholder="0.00" value={billed} onChange={(e) => setBilled(e.target.value)} />
+          </div>
+          <div className="lm-form-group">
+            <label className="lm-form-label">Amount Paid</label>
+            <input className="lm-input" type="number" step="0.01" placeholder="0.00 (optional)" value={paid} onChange={(e) => setPaid(e.target.value)} />
+          </div>
+          <div className="lm-form-group flex items-end">
+            <button className="lm-btn primary" onClick={addLine}>Add Expense</button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="lm-card">
+        <div className="lm-card-header">
+          <h3 className="lm-card-title">Medical Expenses Summary</h3>
+        </div>
+        {lines.length === 0 ? (
+          <div className="lm-empty-state">
+            <div className="lm-empty-title">No Expenses Added</div>
+            <p className="lm-empty-description">Add medical expenses to calculate total damages</p>
+          </div>
+        ) : (
+          <>
+      <table className="w-full">
         <thead>
           <tr>
-            <th style={{ textAlign: 'left', borderBottom: '1px solid #eee' }}>Provider</th>
-            <th style={{ textAlign: 'left', borderBottom: '1px solid #eee' }}>Date</th>
-            <th style={{ textAlign: 'right', borderBottom: '1px solid #eee' }}>Billed</th>
-            <th style={{ textAlign: 'right', borderBottom: '1px solid #eee' }}>Paid</th>
+            <th>Provider/Service</th>
+            <th>Date</th>
+            <th style={{ textAlign: 'right' }}>Amount Billed</th>
+            <th style={{ textAlign: 'right' }}>Amount Paid</th>
           </tr>
         </thead>
         <tbody>
           {lines.map((l, i) => (
             <tr key={i}>
-              <td style={{ borderBottom: '1px solid #f2f2f2' }}>{l.provider}</td>
-              <td style={{ borderBottom: '1px solid #f2f2f2' }}>{l.date}</td>
-              <td style={{ borderBottom: '1px solid #f2f2f2', textAlign: 'right' }}>{l.billed.toFixed(2)}</td>
-              <td style={{ borderBottom: '1px solid #f2f2f2', textAlign: 'right' }}>{l.paid != null ? l.paid.toFixed(2) : '-'}</td>
+              <td>{l.provider}</td>
+              <td>{new Date(l.date).toLocaleDateString()}</td>
+              <td style={{ textAlign: 'right' }}>${l.billed.toFixed(2)}</td>
+              <td style={{ textAlign: 'right' }}>{l.paid != null ? `$${l.paid.toFixed(2)}` : '—'}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div style={{ marginTop: 8 }}>
-        <strong>Total medical specials:</strong> ${specials.toFixed(2)}
+      <div className="lm-divider"></div>
+      <div className="flex justify-between items-center">
+        <div className="font-semibold text-lg">Total Medical Specials:</div>
+        <div className="font-bold text-xl text-primary">${specials.toFixed(2)}</div>
+      </div>
+          </>
+        )}
       </div>
     </div>
   )
@@ -914,27 +1377,76 @@ function ReviewPage() {
 
   return (
     <div>
-      <h1>Review</h1>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Document Review</h1>
+          <p className="lm-page-subtitle">Review and approve documents before final export</p>
+        </div>
+      </div>
+      
+      <div className="lm-card mb-6">
+        <div className="lm-form-row">
         {!params.matterId && (
-          <>
-            <label>Matter ID</label>
-            <input value={matterId} onChange={(e) => setMatterId(e.target.value)} style={{ padding: 6, border: '1px solid #ddd', borderRadius: 6 }} />
-          </>
+          <div className="lm-form-group">
+            <label className="lm-form-label">Matter ID</label>
+            <input className="lm-input" value={matterId} onChange={(e) => setMatterId(e.target.value)} />
+          </div>
         )}
-        <span>Status: <strong>{status?.status || 'unknown'}</strong></span>
-        <button onClick={approve} disabled={busy}>Approve</button>
+          <div className="lm-form-group flex items-center gap-4">
+            <div>
+              <span className="text-muted">Status: </span>
+              <span className={`lm-chip ${status?.status === 'approved' ? 'success' : 'warning'}`}>
+                {status?.status || 'unknown'}
+              </span>
+            </div>
+            <button className="lm-btn primary" onClick={approve} disabled={busy}>
+              {busy ? 'Approving...' : 'Approve Document'}
+            </button>
+          </div>
+        </div>
       </div>
-      <h3>Comments</h3>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Add a comment (@name to mention)" style={{ flex: 1, padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-        <button onClick={addComment} disabled={busy}>Add</button>
+      
+      <div className="lm-card">
+        <div className="lm-card-header">
+          <h3 className="lm-card-title">Review Comments</h3>
+          <p className="lm-card-subtitle">Add comments and collaborate on document review</p>
+        </div>
+        
+        <div className="flex gap-2 mb-6">
+          <input 
+            className="lm-input" 
+            value={text} 
+            onChange={(e) => setText(e.target.value)} 
+            placeholder="Add a comment (@name to mention someone)..." 
+            style={{ flex: 1 }}
+            onKeyPress={(e) => e.key === 'Enter' && addComment()}
+          />
+          <button className="lm-btn primary" onClick={addComment} disabled={busy}>
+            {busy ? 'Adding...' : 'Add Comment'}
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {comments.length === 0 ? (
+            <div className="lm-empty-state">
+              <div className="lm-empty-title">No Comments</div>
+              <p className="lm-empty-description">Add the first comment to start the review discussion</p>
+            </div>
+          ) : (
+            comments.map((c: any) => (
+              <div key={c.id} className="p-4 border border-gray-200 rounded">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="font-semibold">{c.authorId}</span>
+                  <span className="text-sm text-muted">
+                    {new Date(c.createdAt).toLocaleString?.() || c.createdAt}
+                  </span>
+                </div>
+                <div>{c.text}</div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-      <ul>
-        {comments.map((c: any) => (
-          <li key={c.id}><strong>{c.authorId}</strong> [{new Date(c.createdAt).toLocaleString?.() || c.createdAt}]: {c.text}</li>
-        ))}
-      </ul>
     </div>
   )
 }
@@ -978,43 +1490,138 @@ function ExportsPage() {
 
   return (
     <div>
-      <h1>Export</h1>
-      <div style={{ display: 'grid', gap: 12, gridTemplateColumns: '1fr 1fr' }}>
+      <div className="lm-page-header">
+        <div className="lm-page-title">
+          <h1>Document Export</h1>
+          <p className="lm-page-subtitle">Export finalized documents with proper redaction and formatting</p>
+        </div>
+      </div>
+      
+      <div className="lm-grid-2">
         <div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
+          <div className="lm-card mb-6">
+            <div className="lm-card-header">
+              <h3 className="lm-card-title">Export Settings</h3>
+            </div>
+            <div className="lm-form-row mb-4">
             {!params.matterId && (
-              <>
-                <label>Matter ID</label>
-                <input value={matterId} onChange={(e) => setMatterId(e.target.value)} style={{ padding: 6, border: '1px solid #ddd', borderRadius: 6 }} />
-              </>
+              <div className="lm-form-group">
+                <label className="lm-form-label">Matter ID</label>
+                <input className="lm-input" value={matterId} onChange={(e) => setMatterId(e.target.value)} />
+              </div>
             )}
-            <span>Status: <strong>{status?.status || 'unknown'}</strong></span>
+              <div className="lm-form-group">
+                <div>
+                  <span className="text-muted">Approval Status: </span>
+                  <span className={`lm-chip ${status?.status === 'approved' ? 'success' : 'warning'}`}>
+                    {status?.status || 'unknown'}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-            <label>Mode</label>
-            <select value={mode} onChange={(e) => setMode(e.target.value as any)}>
-              <option value="DRAFT">DRAFT</option>
-              <option value="FINAL" disabled={finalDisabled}>FINAL (requires approval)</option>
-            </select>
-            <label>Redaction preset</label>
-            <select value={preset} onChange={(e) => setPreset(e.target.value as any)}>
-              <option value="Insurer">Insurer</option>
-              <option value="Client">Client</option>
-              <option value="CoCounsel">CoCounsel</option>
-            </select>
+          
+          <div className="lm-card mb-6">
+            <div className="lm-card-header">
+              <h3 className="lm-card-title">Export Configuration</h3>
+            </div>
+            <div className="lm-form-row mb-4">
+              <div className="lm-form-group">
+                <label className="lm-form-label">Export Mode</label>
+                <select className="lm-select" value={mode} onChange={(e) => setMode(e.target.value as any)}>
+                  <option value="DRAFT">Draft Version</option>
+                  <option value="FINAL" disabled={finalDisabled}>Final Version (requires approval)</option>
+                </select>
+                {finalDisabled && (
+                  <div className="lm-form-help text-warning">Document must be approved before final export</div>
+                )}
+              </div>
+              <div className="lm-form-group">
+                <label className="lm-form-label">Redaction Preset</label>
+                <select className="lm-select" value={preset} onChange={(e) => setPreset(e.target.value as any)}>
+                  <option value="Insurer">Insurance Company</option>
+                  <option value="Client">Client Copy</option>
+                  <option value="CoCounsel">Co-Counsel</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div style={{ display: 'grid', gap: 8 }}>
-            <textarea value={liability} onChange={(e) => setLiability(e.target.value)} placeholder="Liability" style={{ width: '100%', height: 120, padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-            <textarea value={treatment} onChange={(e) => setTreatment(e.target.value)} placeholder="Treatment" style={{ width: '100%', height: 120, padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-            <textarea value={damages} onChange={(e) => setDamages(e.target.value)} placeholder="Damages" style={{ width: '100%', height: 120, padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-          </div>
-          <div style={{ marginTop: 8 }}>
-            <button onClick={doExport} disabled={busy || (mode === 'FINAL' && finalDisabled)}>{busy ? 'Exporting…' : 'Export'}</button>
+          
+          <div className="lm-card">
+            <div className="lm-card-header">
+              <h3 className="lm-card-title">Document Sections</h3>
+            </div>
+            <div className="space-y-4">
+              <div className="lm-form-group">
+                <label className="lm-form-label">Liability Section</label>
+                <textarea 
+                  className="lm-textarea" 
+                  value={liability} 
+                  onChange={(e) => setLiability(e.target.value)} 
+                  placeholder="Enter liability content..."
+                  style={{ height: '120px' }}
+                />
+              </div>
+              <div className="lm-form-group">
+                <label className="lm-form-label">Treatment Section</label>
+                <textarea 
+                  className="lm-textarea" 
+                  value={treatment} 
+                  onChange={(e) => setTreatment(e.target.value)} 
+                  placeholder="Enter treatment details..."
+                  style={{ height: '120px' }}
+                />
+              </div>
+              <div className="lm-form-group">
+                <label className="lm-form-label">Damages Section</label>
+                <textarea 
+                  className="lm-textarea" 
+                  value={damages} 
+                  onChange={(e) => setDamages(e.target.value)} 
+                  placeholder="Enter damages calculation..."
+                  style={{ height: '120px' }}
+                />
+              </div>
+            </div>
+            <div className="mt-6">
+              <button 
+                className="lm-btn primary lg" 
+                onClick={doExport} 
+                disabled={busy || (mode === 'FINAL' && finalDisabled)}
+              >
+                {busy ? 'Exporting Document...' : `Export ${mode} Version`}
+              </button>
+            </div>
           </div>
         </div>
+        
         <div>
-          <h3>Result</h3>
-          {out ? (<div>Saved: {out} {mode === 'FINAL' && <div><em>Note: A non-redacted INTERNAL copy was also saved.</em></div>}</div>) : (<div>No export yet.</div>)}
+          <div className="lm-card">
+            <div className="lm-card-header">
+              <h3 className="lm-card-title">Export Result</h3>
+            </div>
+            {out ? (
+              <div className="space-y-4">
+                <div className="lm-chip success">Export Successful</div>
+                <div>
+                  <div className="font-medium mb-2">Exported File:</div>
+                  <code className="text-sm">{out}</code>
+                </div>
+                {mode === 'FINAL' && (
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                    <div className="text-sm text-blue-800">
+                      <strong>Note:</strong> A non-redacted INTERNAL copy was also saved for your records.
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="lm-empty-state">
+                <div className="lm-empty-title">No Export Yet</div>
+                <p className="lm-empty-description">Configure your export settings and click Export to generate the document</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
