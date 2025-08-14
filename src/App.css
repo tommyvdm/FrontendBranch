@@ -53,33 +53,17 @@
 
 /* Matter Cards */
 .lm-matter-card {
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius-lg);
   padding: var(--lm-space-lg);
   box-shadow: var(--lm-shadow-sm);
   transition: all 0.15s ease;
-  backdrop-filter: var(--lm-backdrop-blur);
-  position: relative;
-  overflow: hidden;
-}
-
-.lm-matter-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, transparent, rgba(96, 165, 250, 0.02));
-  pointer-events: none;
 }
 
 .lm-matter-card:hover {
-  border-color: rgba(96, 165, 250, 0.5);
+  border-color: var(--lm-gray-300);
   box-shadow: var(--lm-shadow-md);
-  background: linear-gradient(135deg, var(--lm-gray-200), var(--lm-gray-300));
-  transform: translateY(-2px);
 }
 
 .lm-matter-header {
@@ -165,14 +149,13 @@
 }
 
 .lm-sidebar {
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius-lg);
   padding: 0;
   box-shadow: var(--lm-shadow-sm);
   position: sticky;
   top: var(--lm-space-lg);
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-sidebar-header {
@@ -180,7 +163,7 @@
   border-bottom: 1px solid var(--lm-border);
   font-weight: 600;
   color: var(--lm-text);
-  background: linear-gradient(135deg, var(--lm-gray-200), var(--lm-gray-300));
+  background: var(--lm-gray-50);
   border-radius: var(--lm-radius-lg) var(--lm-radius-lg) 0 0;
 }
 
@@ -205,7 +188,7 @@
 }
 
 .lm-sidebar-item:hover {
-  background: linear-gradient(135deg, var(--lm-hover), var(--lm-gray-300));
+  background: var(--lm-hover);
 }
 
 .lm-sidebar-item:last-child {
@@ -219,19 +202,16 @@
 }
 
 .lm-document-item {
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius);
   padding: var(--lm-space-md);
   transition: all 0.15s ease;
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-document-item:hover {
-  border-color: rgba(96, 165, 250, 0.5);
+  border-color: var(--lm-gray-300);
   box-shadow: var(--lm-shadow);
-  background: linear-gradient(135deg, var(--lm-gray-200), var(--lm-gray-300));
-  transform: translateY(-1px);
 }
 
 .lm-document-header {
@@ -257,14 +237,13 @@
 
 /* Chat Interface */
 .lm-chat-container {
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius-lg);
   display: flex;
   flex-direction: column;
   height: 400px;
   overflow: hidden;
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-chat-messages {
@@ -299,12 +278,12 @@
 }
 
 .lm-chat-bubble.user {
-  background: linear-gradient(135deg, var(--lm-primary), var(--lm-purple-500));
+  background: var(--lm-primary);
   color: var(--lm-primary-contrast);
 }
 
 .lm-chat-bubble.assistant {
-  background: linear-gradient(135deg, var(--lm-gray-200), var(--lm-gray-300));
+  background: var(--lm-gray-100);
   color: var(--lm-text);
 }
 
@@ -353,11 +332,10 @@
 }
 
 .lm-timeline-content {
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius);
   padding: var(--lm-space-md);
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-timeline-date {
@@ -387,12 +365,11 @@
 }
 
 .lm-evidence-column {
-  background: linear-gradient(135deg, var(--lm-gray-100), var(--lm-gray-200));
+  background: var(--lm-gray-50);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius-lg);
   padding: var(--lm-space-md);
   min-height: 400px;
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-evidence-header {
@@ -404,20 +381,17 @@
 }
 
 .lm-evidence-item {
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius);
   padding: var(--lm-space-sm);
   margin-bottom: var(--lm-space-sm);
   cursor: grab;
   transition: all 0.15s ease;
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-evidence-item:hover {
   box-shadow: var(--lm-shadow);
-  background: linear-gradient(135deg, var(--lm-gray-200), var(--lm-gray-300));
-  transform: translateY(-1px);
 }
 
 .lm-evidence-item:active {
@@ -433,30 +407,27 @@
 }
 
 .lm-drafting-stepper {
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius-lg);
   padding: var(--lm-space-lg);
   overflow-y: auto;
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-drafting-preview {
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius-lg);
   padding: var(--lm-space-lg);
   overflow-y: auto;
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-drafting-chat {
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius-lg);
   display: flex;
   flex-direction: column;
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-stepper {
@@ -477,11 +448,11 @@
 }
 
 .lm-stepper-item:hover {
-  background: linear-gradient(135deg, var(--lm-hover), var(--lm-gray-300));
+  background: var(--lm-hover);
 }
 
 .lm-stepper-item.active {
-  background: linear-gradient(135deg, var(--lm-primary-light), var(--lm-gray-200));
+  background: var(--lm-primary-light);
   color: var(--lm-primary);
   font-weight: 600;
 }
@@ -493,14 +464,14 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--lm-gray-300), var(--lm-gray-400));
+  background: var(--lm-gray-200);
   color: var(--lm-text-secondary);
   font-size: 12px;
   font-weight: 600;
 }
 
 .lm-stepper-item.active .lm-stepper-number {
-  background: linear-gradient(135deg, var(--lm-primary), var(--lm-purple-500));
+  background: var(--lm-primary);
   color: var(--lm-primary-contrast);
 }
 
@@ -522,14 +493,13 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: linear-gradient(135deg, var(--lm-bg), var(--lm-gray-200));
+  background: var(--lm-bg);
   border: 1px solid var(--lm-border);
   border-radius: var(--lm-radius);
   box-shadow: var(--lm-shadow-lg);
   z-index: 50;
   max-height: 300px;
   overflow-y: auto;
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-search-result {
@@ -540,7 +510,7 @@
 }
 
 .lm-search-result:hover {
-  background: linear-gradient(135deg, var(--lm-hover), var(--lm-gray-300));
+  background: var(--lm-hover);
 }
 
 .lm-search-result:last-child {

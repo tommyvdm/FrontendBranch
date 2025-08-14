@@ -1,70 +1,63 @@
 :root {
 	/* Color System - Professional Legal Theme */
 	--lm-white: #ffffff;
-	--lm-gray-50: #0a0b0f;
-	--lm-gray-100: #111218;
-	--lm-gray-200: #1a1d26;
-	--lm-gray-300: #252936;
-	--lm-gray-400: #3d4451;
-	--lm-gray-500: #6b7280;
-	--lm-gray-600: #9ca3af;
-	--lm-gray-700: #d1d5db;
-	--lm-gray-800: #e5e7eb;
-	--lm-gray-900: #f9fafb;
+	--lm-gray-50: #f8fafc;
+	--lm-gray-100: #f1f5f9;
+	--lm-gray-200: #e2e8f0;
+	--lm-gray-300: #cbd5e1;
+	--lm-gray-400: #94a3b8;
+	--lm-gray-500: #64748b;
+	--lm-gray-600: #475569;
+	--lm-gray-700: #334155;
+	--lm-gray-800: #1e293b;
+	--lm-gray-900: #0f172a;
 	
-	--lm-blue-50: #0f1419;
-	--lm-blue-100: #1e2a3a;
-	--lm-blue-200: #2d3f5f;
-	--lm-blue-300: #4f6b8a;
-	--lm-blue-400: #7c9cc7;
-	--lm-blue-500: #60a5fa;
-	--lm-blue-600: #3b82f6;
-	--lm-blue-700: #2563eb;
-	--lm-blue-800: #1d4ed8;
-	--lm-blue-900: #1e40af;
-
-	/* Accent Colors */
-	--lm-purple-500: #8b5cf6;
-	--lm-purple-600: #7c3aed;
-	--lm-purple-light: rgba(139, 92, 246, 0.1);
-	--lm-amber-500: #f59e0b;
-	--lm-amber-light: rgba(245, 158, 11, 0.1);
+	--lm-blue-50: #eff6ff;
+	--lm-blue-100: #dbeafe;
+	--lm-blue-200: #bfdbfe;
+	--lm-blue-300: #93c5fd;
+	--lm-blue-400: #60a5fa;
+	--lm-blue-500: #3b82f6;
+	--lm-blue-600: #2563eb;
+	--lm-blue-700: #1d4ed8;
+	--lm-blue-800: #1e40af;
+	--lm-blue-900: #1e3a8a;
 
 	/* Semantic Colors */
-	--lm-bg: var(--lm-gray-100);
+	--lm-bg: var(--lm-white);
 	--lm-page-bg: var(--lm-gray-50);
-	--lm-sidebar-bg: var(--lm-gray-100);
-	--lm-topbar-bg: rgba(17, 18, 24, 0.95);
+	--lm-sidebar-bg: var(--lm-white);
+	--lm-topbar-bg: var(--lm-white);
 	--lm-text: var(--lm-gray-900);
-	--lm-text-secondary: var(--lm-gray-700);
+	--lm-text-secondary: var(--lm-gray-600);
 	--lm-text-muted: var(--lm-gray-500);
-	--lm-border: var(--lm-gray-300);
-	--lm-border-light: var(--lm-gray-200);
-	--lm-hover: var(--lm-gray-200);
-	--lm-hover-strong: var(--lm-gray-300);
-	--lm-primary: var(--lm-blue-500);
-	--lm-primary-hover: var(--lm-blue-400);
-	--lm-primary-light: var(--lm-blue-100);
+	--lm-border: var(--lm-gray-200);
+	--lm-border-light: var(--lm-gray-100);
+	--lm-hover: var(--lm-gray-50);
+	--lm-hover-strong: var(--lm-gray-100);
+	--lm-primary: var(--lm-blue-600);
+	--lm-primary-hover: var(--lm-blue-700);
+	--lm-primary-light: var(--lm-blue-50);
 	--lm-primary-contrast: var(--lm-white);
 	
 	/* Status Colors */
 	--lm-success: #059669;
-	--lm-success-light: rgba(5, 150, 105, 0.15);
+	--lm-success-light: #d1fae5;
 	--lm-warning: #d97706;
-	--lm-warning-light: rgba(217, 119, 6, 0.15);
+	--lm-warning-light: #fef3c7;
 	--lm-error: #dc2626;
-	--lm-error-light: rgba(220, 38, 38, 0.15);
+	--lm-error-light: #fee2e2;
 	
 	/* Design Tokens */
 	--lm-radius: 8px;
 	--lm-radius-sm: 6px;
 	--lm-radius-lg: 12px;
 	--lm-space: 8px;
-	--lm-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-	--lm-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-	--lm-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-	--lm-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-	--lm-ring: 0 0 0 3px rgba(96, 165, 250, 0.3);
+	--lm-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	--lm-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+	--lm-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+	--lm-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+	--lm-ring: 0 0 0 3px rgba(37, 99, 235, 0.1);
 	--lm-ring-offset: 0 0 0 2px var(--lm-white);
 	
 	/* Typography */
@@ -79,11 +72,6 @@
 	--lm-space-xl: 32px;
 	--lm-space-2xl: 48px;
 	--lm-space-3xl: 64px;
-
-	/* Glass Effect */
-	--lm-glass-bg: rgba(17, 18, 24, 0.8);
-	--lm-glass-border: rgba(255, 255, 255, 0.1);
-	--lm-backdrop-blur: blur(12px);
 }
 
 /* Base Styles */
@@ -375,22 +363,6 @@ body {
 	background: var(--lm-page-bg);
 	display: flex;
 	flex-direction: column;
-  position: relative;
-}
-
-.lm-shell::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
 }
 
 .lm-main {
@@ -411,7 +383,6 @@ body {
 	top: 0;
 	z-index: 50;
 	box-shadow: var(--lm-shadow-sm);
-  backdrop-filter: var(--lm-backdrop-blur);
 }
 
 .lm-topbar-left {
